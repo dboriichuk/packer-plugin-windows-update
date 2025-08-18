@@ -31,6 +31,14 @@ param(
     [switch]$OnlyCheckForRebootRequired = $false
 )
 
+# No-resume flag to prevent retry after reboot
+$NoResumeFlag = 'C:\Windows\Temp\wu-no-resume.flag'
+if (Test-Path $NoResumeFlag) {
+    Remove-Item $NoResumeFlag -Force
+    Write-Output 'Post-reboot: skipping windows-update retry.'
+    ExitWithCode 0
+}
+
 $mock = $false
 
 function ExitWithCode($exitCode) {
@@ -134,6 +142,8 @@ function ExitWhenRebootRequired($rebootRequired = $false) {
     if ($rebootRequired) {
         Write-Output 'Waiting for the Windows Modules Installer to exit...'
         Wait-Condition {(Get-Process -ErrorAction SilentlyContinue TiWorker | Measure-Object).Count -eq 0}
+        # Create no-resume flag to prevent retry after reboot
+        New-Item -ItemType File -Path $NoResumeFlag -Force | Out-Null
         ExitWithCode 101
     }
 }
