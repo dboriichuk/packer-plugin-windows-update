@@ -52,8 +52,12 @@ trap {
 }
 
 if (Test-Path $NoResumeFlag) {
-    Remove-Item $NoResumeFlag -Force
-    Write-Output 'Post-reboot: skipping windows-update retry.'
+    if (-not $OnlyCheckForRebootRequired) {
+        Remove-Item $NoResumeFlag -Force
+        Write-Output 'Post-reboot: skipping windows-update retry.'
+    } else {
+        Write-Output 'Post-reboot detected; will skip windows-update on next run.'
+    }
     ExitWithCode 0
 }
 
