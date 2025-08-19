@@ -33,11 +33,6 @@ param(
 
 # No-resume flag to prevent retry after reboot
 $NoResumeFlag = 'C:\Windows\Temp\wu-no-resume.flag'
-if (Test-Path $NoResumeFlag) {
-    Remove-Item $NoResumeFlag -Force
-    Write-Output 'Post-reboot: skipping windows-update retry.'
-    ExitWithCode 0
-}
 
 $mock = $false
 
