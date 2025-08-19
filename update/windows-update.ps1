@@ -56,6 +56,12 @@ trap {
     ExitWithCode 1
 }
 
+if (Test-Path $NoResumeFlag) {
+    Remove-Item $NoResumeFlag -Force
+    Write-Output 'Post-reboot: skipping windows-update retry.'
+    ExitWithCode 0
+}
+
 if ($mock) {
     $mockWindowsUpdatePath = 'C:\Windows\Temp\windows-update-count-mock.txt'
     if (!(Test-Path $mockWindowsUpdatePath)) {
